@@ -24,9 +24,12 @@ public class Program {
 //		for (Seller obj : list) {
 //			System.out.println(obj);
 //		}
-		
 		list.forEach(System.out::println);
 
+		System.out.println("\n=== Test 03: seller findAll ====");
+		list = sellerDao.findAll();
+
+		list.forEach(System.out::println);
 	}
 
 }
