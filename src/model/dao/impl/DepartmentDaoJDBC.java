@@ -35,10 +35,12 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 					obj.setId(id);
 				}
 				DB.closeResultSet(rs);
+			} else {
+				throw new DbException("Unexpected error! No rows affected!");
 			}
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
@@ -70,10 +72,10 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			int rows = st.executeUpdate();
 			if (rows == 0) {
 				throw new DbException("Id not exist");
-			}			
-		}catch(SQLException e) {
+			}
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}finally{
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
@@ -89,11 +91,14 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			if (rs.next()) {
 				Department dep = instantiateDepartment(rs);
 				return dep;
-			}else {
+			} else {
 				throw new DbException("Id not exist");
 			}
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
 		}
 	}
 
@@ -102,7 +107,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM department");
+			st = conn.prepareStatement("SELECT * FROM department ORDER BY Name");
 			rs = st.executeQuery();
 			List<Department> list = new ArrayList<Department>();
 			while (rs.next()) {
